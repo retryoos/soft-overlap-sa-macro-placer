@@ -158,5 +158,6 @@ The implementation uses the official challenge package plus:
 Apache 2.0
 
 ## Authors
-- Dimitris Kalligaridis
-- Apostolos Kakarantzas
+
+- Dimitris Kalligaridis - [LinkedIn](https://www.linkedin.com/dimitrios-kalligaridis/)
+- Apostolos Kakarantzas - [LinkedIn](https://www.linkedin.com/in/akakarantzas/)
