@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="360" viewBox="0 0 1100 360" role="img" aria-labelledby="title desc">
+  <title id="title">V57 Soft-Overlap SA pipeline</title>
+  <desc id="desc">Pipeline from initial placement through soft-overlap legalization and hard-reject simulated annealing to final legal placement.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f2937"/>
+    </marker>
+    <style>
+      .bg{fill:#f8fafc}.box{fill:#fff;stroke:#334155;stroke-width:2;rx:8}.main{font:700 22px Arial,sans-serif;fill:#0f172a}.sub{font:15px Arial,sans-serif;fill:#334155}.small{font:13px Arial,sans-serif;fill:#475569}.arrow{stroke:#1f2937;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.chip{fill:#dbeafe;stroke:#2563eb;stroke-width:1.5}.bad{fill:#fee2e2;stroke:#dc2626}.good{fill:#dcfce7;stroke:#16a34a}.accent{fill:#fef3c7;stroke:#d97706}
+    </style>
+  </defs>
+  <rect width="1100" height="360" class="bg"/>
+  <text x="40" y="46" class="main">V57 Soft-Overlap SA Macro Placer</text>
+  <text x="40" y="72" class="sub">Preserve the analytical initial placement, remove overlaps with a soft penalty, then refine with incremental true-proxy SA.</text>
+
+  <rect x="45" y="115" width="220" height="150" class="box"/>
+  <text x="70" y="145" class="main">1. Initial PLC</text>
+  <text x="70" y="174" class="sub">Start from evaluator-provided</text>
+  <text x="70" y="196" class="sub">analytical placement.</text>
+  <rect x="78" y="218" width="42" height="24" class="chip"/>
+  <rect x="110" y="230" width="48" height="20" class="bad"/>
+  <rect x="168" y="212" width="56" height="34" class="chip"/>
+  <text x="70" y="286" class="small">High quality, but may overlap.</text>
+
+  <path d="M 282 190 L 352 190" class="arrow"/>
+
+  <rect x="370" y="115" width="250" height="150" class="box"/>
+  <text x="395" y="145" class="main">2. Soft Legalize</text>
+  <text x="395" y="174" class="sub">Optimize true proxy plus</text>
+  <text x="395" y="196" class="sub">lambda x overlap area.</text>
+  <text x="395" y="224" class="small">lambda ramps upward</text>
+  <text x="395" y="246" class="small">to force strict legality.</text>
+  <rect x="515" y="212" width="42" height="24" class="chip"/>
+  <rect x="470" y="232" width="48" height="20" class="accent"/>
+  <rect x="552" y="228" width="42" height="30" class="chip"/>
+
+  <path d="M 638 190 L 708 190" class="arrow"/>
+
+  <rect x="725" y="115" width="330" height="150" class="box"/>
+  <text x="750" y="145" class="main">3. Hard-Reject SA</text>
+  <text x="750" y="174" class="sub">Incremental updates for HPWL,</text>
+  <text x="750" y="196" class="sub">density, and RUDY congestion.</text>
+  <text x="750" y="224" class="small">Reject overlap moves, accept proxy</text>
+  <text x="750" y="246" class="small">moves by Metropolis criterion.</text>
+  <rect x="935" y="206" width="42" height="24" class="good"/>
+  <rect x="884" y="236" width="48" height="20" class="good"/>
+  <rect x="995" y="232" width="42" height="30" class="good"/>
+
+  <text x="45" y="322" class="sub">Objective: proxy cost = wirelength + 0.5 density + 0.5 congestion. Constraint: zero hard-macro overlaps.</text>
+</svg>

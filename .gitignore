@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.numba_cache/
+.pytest_cache/
+.venv/
+uv.lock
+results/
+*.pt
+*.png
+!assets/*.svg
+!assets/*.png

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+  echo "usage: scripts/setup_in_challenge_repo.sh /path/to/macro-place-challenge-2026" >&2
+  exit 2
+fi
+
+challenge_repo="$1"
+if [[ ! -d "$challenge_repo/submissions" || ! -d "$challenge_repo/macro_place" ]]; then
+  echo "error: expected a Partcl/HRT macro-place-challenge-2026 checkout" >&2
+  exit 2
+fi
+
+mkdir -p "$challenge_repo/submissions/retryoos"
+cp placer.py "$challenge_repo/submissions/v57_soft_overlap_sa.py"
+cp submissions/__init__.py "$challenge_repo/submissions/__init__.py"
+cp submissions/retryoos/__init__.py "$challenge_repo/submissions/retryoos/__init__.py"
+cp submissions/retryoos/top1_incremental_sa.py "$challenge_repo/submissions/retryoos/top1_incremental_sa.py"
+cp submissions/retryoos/top1_soft_overlap_sa.py "$challenge_repo/submissions/retryoos/top1_soft_overlap_sa.py"
+cp submissions/retryoos/top1_replace_sa.py "$challenge_repo/submissions/retryoos/top1_replace_sa.py"
+
+echo "Installed V57 Soft-Overlap SA placer into: $challenge_repo/submissions/v57_soft_overlap_sa.py"
+echo "Run: cd \"$challenge_repo\" && uv run evaluate submissions/v57_soft_overlap_sa.py --all"
