@@ -1,9 +1,9 @@
 """
-Incremental Delta True-Proxy SA (Numba JIT)
-============================================
-The full True-Proxy SA in `top1_replace_sa.py` recomputes the entire net
-bbox sweep + RUDY grid + density grid + sort on EVERY iteration. That makes
-each iter cost O(K + N*bbox + G²log G²), giving ~1963 iters/s on ibm10.
+Incremental proxy simulated annealing (Numba JIT).
+
+The slow reference SA in `top1_replace_sa.py` recomputes the entire net bbox
+sweep, RUDY grid, density grid and sort on every iteration. This module keeps
+that state incrementally so the inner loop can explore many more legal moves.
 
 This module maintains the density / RUDY / net-bbox state and updates it
 INCREMENTALLY on each move (touching only nets containing the moved macro):
@@ -11,9 +11,6 @@ INCREMENTALLY on each move (touching only nets containing the moved macro):
   - net bbox: O(degree(m) * pins_per_net)
   - RUDY: O(degree(m) * bbox_bins_per_net)
   - top-K cost: still O(G²) but with np.partition (linear) not np.sort.
-
-Expected speedup: ~10× → ibm10 at ~20k iters/s, so 20M iters in ~1000s
-instead of 50,000s in V53.
 
 Symmetric make/unmake pattern: same function applied with reverse args undoes.
 
@@ -131,7 +128,7 @@ def _compute_topk_cost(density, rudy_h, rudy_v,
                        g_cols, g_rows, bin_area,
                        hroutes, vroutes, bin_w, bin_h,
                        total_hpwl, const_hpwl, wl_norm):
-    """Compute the True-Proxy cost from current state via top-K partition."""
+    """Compute the incremental proxy estimate from current state via top-K partition."""
     n_bins = g_cols * g_rows
 
     # Flatten density / bin_area
@@ -233,8 +230,7 @@ def run_incremental_sa(
     hroutes, vroutes, wl_norm, const_hpwl,
 ):
     """
-    Incremental True-Proxy SA. Same accept rule as V53/V54 but with
-    ~10× faster per-iteration cost.
+    Incremental proxy SA with local state updates for faster per-iteration cost.
     """
     np.random.seed(seed)
 

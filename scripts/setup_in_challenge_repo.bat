@@ -17,12 +17,12 @@ if not exist "%CHALLENGE_REPO%\macro_place" (
 )
 
 if not exist "%CHALLENGE_REPO%\submissions\retryoos" mkdir "%CHALLENGE_REPO%\submissions\retryoos"
-copy /Y placer.py "%CHALLENGE_REPO%\submissions\v57_soft_overlap_sa.py" >nul
+copy /Y placer.py "%CHALLENGE_REPO%\submissions\soft_overlap_sa_macro_placer.py" >nul
 copy /Y submissions\__init__.py "%CHALLENGE_REPO%\submissions\__init__.py" >nul
 copy /Y submissions\retryoos\__init__.py "%CHALLENGE_REPO%\submissions\retryoos\__init__.py" >nul
 copy /Y submissions\retryoos\top1_incremental_sa.py "%CHALLENGE_REPO%\submissions\retryoos\top1_incremental_sa.py" >nul
 copy /Y submissions\retryoos\top1_soft_overlap_sa.py "%CHALLENGE_REPO%\submissions\retryoos\top1_soft_overlap_sa.py" >nul
 copy /Y submissions\retryoos\top1_replace_sa.py "%CHALLENGE_REPO%\submissions\retryoos\top1_replace_sa.py" >nul
 
-echo Installed V57 Soft-Overlap SA placer into: %CHALLENGE_REPO%\submissions\v57_soft_overlap_sa.py
-echo Run: cd /d "%CHALLENGE_REPO%" ^&^& uv run evaluate submissions/v57_soft_overlap_sa.py --all
+echo Installed Soft-Overlap SA placer into: %CHALLENGE_REPO%\submissions\soft_overlap_sa_macro_placer.py
+echo Run: cd /d "%CHALLENGE_REPO%" ^&^& uv run evaluate submissions/soft_overlap_sa_macro_placer.py --all

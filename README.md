@@ -1,81 +1,82 @@
-# V57 Soft-Overlap SA Macro Placer
+# Soft-Overlap Simulated Annealing Macro Placer
 
 Submission repository for the Partcl x Hudson River Trading Macro Placement Challenge 2026.
 
-V57 is a two-phase simulated annealing macro placer built around one practical observation: the provided `initial.plc` placements are already strong analytical placements, but they can contain hard-macro overlaps. The algorithm tries to preserve that quality while making the placement legal, then spends the remaining runtime on true-proxy refinement.
+This placer is a two-stage simulated annealing method for the Tier-1 IBM macro-placement proxy objective. It starts from the competition-provided `initial.plc`, tries to remove hard-macro overlaps with minimum displacement, and then refines the legal placement with a fast incremental proxy model.
 
-![V57 pipeline](assets/v57_pipeline.svg)
+![Pipeline overview](assets/pipeline.svg)
 
-## What It Optimizes
+## Objective And Constraints
 
-The challenge proxy objective is:
+The official Tier-1 proxy objective is:
 
 ```text
 Proxy Cost = Wirelength + 0.5 * Density + 0.5 * Congestion
 ```
 
-The hard constraint is strict: final hard-macro placements must have zero overlaps. V57 adds a small placement gap during legality checks to reduce float-precision edge cases.
+The final placement must have zero hard-macro overlaps. The implementation uses a small legality gap when checking candidate moves to reduce float-precision edge cases.
 
 ## Algorithm
 
-### 1. Start From `initial.plc`
+### 1. Preserve The Initial Placement
 
-V57 does not discard the competition-provided initial placement. In this benchmark suite those placements are often close to the RePlAce baseline quality, so the first goal is minimum-displacement legalization rather than a fresh random or greedy start.
+The algorithm does not start from a fresh random layout. It begins with the supplied `initial.plc` placement because those coordinates often contain useful global structure. The first phase therefore focuses on legalizing the placement with as little movement as practical.
 
-### 2. Soft-Overlap SA Legalization
+### 2. Soft-Overlap Legalization
 
-If the initial placement has overlaps, V57 runs a soft-overlap simulated annealing pass:
+If the initial placement contains hard-macro overlaps, the placer runs a soft-overlap simulated annealing pass:
 
 ```text
-soft_cost = true_proxy_cost + lambda * overlap_area
+soft_cost = incremental_proxy_estimate + lambda * overlap_area
 ```
 
-`lambda` ramps upward during the run. Early moves are allowed to preserve proxy quality; later moves increasingly prioritize removing the remaining overlap area. If a tiny number of overlaps survives, a micro-legalization fallback is applied.
+`lambda` increases over the run. Early moves can trade a small amount of overlap for lower proxy cost; later moves increasingly prioritize eliminating overlap. If any overlap remains after this phase, the placer applies a micro-legalization fallback before refinement.
 
-### 3. Incremental Hard-Reject SA Refinement
+### 3. Hard-Reject Incremental SA Refinement
 
-After legalization, V57 runs a hard-reject SA loop. Candidate moves that introduce hard-macro overlap are rejected immediately. Legal moves are evaluated with an incremental true-proxy model that updates:
+After legalization, candidate moves that would create a hard-macro overlap are rejected immediately. Legal moves are scored with an incremental proxy estimator that updates only local state affected by the moved macro:
 
-- HPWL bounding boxes only for nets touched by the moved macro
-- Density bins touched by the moved macro footprint
+- HPWL bounding boxes for touched nets
+- Density bins touched by the macro footprint
 - RUDY-style congestion bins touched by affected net bounding boxes
 
-This avoids recomputing the full objective from scratch on every move and gives enough throughput to use long SA budgets within the 1-hour per-benchmark cap.
+This inner-loop estimator is not a replacement for the official evaluator. It is used for high-throughput search; the official challenge evaluator remains the source of truth for submitted scores.
 
 ## Results
 
-Internal validated full-suite result recorded for V57:
+Development aggregate recorded for this implementation:
 
 | Method | Avg Proxy Cost | Overlaps | Runtime |
 | --- | ---: | ---: | --- |
-| V57 Soft-Overlap SA | 1.4734 | 0 | About 56 minutes total across 17 IBM benchmarks |
+| Soft-Overlap SA placer | 1.4734 | 0 | About 56 minutes total across 17 IBM benchmarks |
 | RePlAce baseline | 1.4578 | 0 | Organizer baseline |
 | SA baseline | 2.1251 | 0 | Organizer baseline |
 
 ![Score comparison](assets/score_comparison.svg)
 
-The `1.4734` score is the local validated aggregate recorded in the development notes for the final V57/V58 baseline. The original per-benchmark JSON artifact is not included in this repository, so judges should treat the repository as the executable implementation and re-run evaluation in the official environment.
+The `1.4734` figure is a local development result, not an organizer-verified leaderboard score. The executable implementation is the source of truth; judges should re-run the official evaluator in their environment.
 
 ## Repository Layout
 
 ```text
-placer.py
-submissions/retryoos/top1_incremental_sa.py
-submissions/retryoos/top1_soft_overlap_sa.py
-scripts/generate_artifacts.py
-submissions/retryoos/top1_replace_sa.py
-scripts/setup_in_challenge_repo.sh
+placer.py                                  # submission entry point
+submissions/retryoos/top1_incremental_sa.py # incremental SA kernels
+submissions/retryoos/top1_soft_overlap_sa.py # soft-overlap legalization
+submissions/retryoos/top1_replace_sa.py      # PlacementCost loading helper
+scripts/setup_in_challenge_repo.sh           # install into official repo
 scripts/setup_in_challenge_repo.bat
 scripts/evaluate_all.sh
+scripts/generate_artifacts.py
 requirements.txt
 assets/
+artifacts/
 ```
 
-`placer.py` is the public entry point. The helper modules contain the Numba kernels and PLC loading utilities used by V57.
+`placer.py` is the file to install into the official challenge checkout. The helper modules contain the Numba kernels and evaluator-loading utilities used by the placer.
 
 ## Setup
 
-Clone the official challenge repository and initialize the evaluator:
+Clone and initialize the official challenge repository:
 
 ```bash
 git clone https://github.com/partcleda/macro-place-challenge-2026.git
@@ -100,20 +101,21 @@ Then run:
 
 ```bash
 cd /path/to/macro-place-challenge-2026
-uv run evaluate submissions/v57_soft_overlap_sa.py -b ibm01
-uv run evaluate submissions/v57_soft_overlap_sa.py --all
+uv run evaluate submissions/soft_overlap_sa_macro_placer.py -b ibm01
+uv run evaluate submissions/soft_overlap_sa_macro_placer.py --all
 ```
 
 To save logs and JSON:
 
 ```bash
 mkdir -p results
-uv run evaluate submissions/v57_soft_overlap_sa.py --all --json-out results/v57_eval.json 2>&1 | tee results/v57_eval.log
+uv run evaluate submissions/soft_overlap_sa_macro_placer.py --all \
+  --json-out results/soft_overlap_sa_eval.json 2>&1 | tee results/soft_overlap_sa_eval.log
 ```
 
 ## Reproducible Artifacts
 
-The repository includes a small artifact generator. The default mode creates fast, data-backed comparison charts from the published challenge baselines and the recorded V57 aggregate:
+The repository includes a small artifact generator. The default mode creates comparison charts from the published challenge baselines and the recorded development aggregate:
 
 ```bash
 python scripts/generate_artifacts.py
@@ -127,7 +129,7 @@ python scripts/generate_artifacts.py \
   --benchmark ibm01
 ```
 
-To run V57 on that benchmark and emit final-placement PNGs plus an animated GIF from `initial.plc` to the V57 output:
+To run the placer on that benchmark and emit final-placement PNGs plus an animated GIF from `initial.plc` to the final output:
 
 ```bash
 python scripts/generate_artifacts.py \
@@ -136,7 +138,7 @@ python scripts/generate_artifacts.py \
   --run-placer
 ```
 
-The animation is deliberately generated from a real placement run. If `--run-placer` is not used, the script only produces static comparison artifacts and the real initial placement.
+If `--run-placer` is not used, the script only produces static comparison artifacts and the initial placement.
 
 ## Dependencies
 
@@ -147,16 +149,16 @@ The implementation uses the official challenge package plus:
 - PyTorch
 - Numba
 - SciPy
-- Matplotlib, Pillow, and tqdm through the challenge environment
+- Matplotlib, Pillow, and tqdm for optional artifact generation
 
-The judges' standard challenge environment should satisfy these dependencies. `requirements.txt` is included for explicit dependency review.
+The judges' standard challenge environment should satisfy the runtime dependencies. `requirements.txt` is included for explicit dependency review.
 
 ## Notes For Judges
 
-- The implementation uses only public benchmark data and the official `macro_place` evaluator API.
+- The implementation uses public benchmark data and the official `macro_place` evaluator API.
 - It does not modify evaluator functions.
 - It does not use proprietary placement tools.
-- It does not use network access at evaluation time.
+- It does not require network access at evaluation time.
 - The algorithm is stochastic but seeded with `seed=42` by default.
 
 ## License

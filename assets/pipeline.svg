@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">Soft-overlap simulated annealing pipeline</title>
+  <desc id="desc">A four step pipeline: start from initial placement, repair overlaps with a soft penalty, refine legal moves with incremental simulated annealing, and return a zero-overlap placement.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#334155"/>
+    </marker>
+    <style>
+      text{font-family:Arial,sans-serif}
+      .bg{fill:#f8fafc}.card{fill:#ffffff;stroke:#cbd5e1;stroke-width:1.5}
+      .title{font-size:26px;font-weight:700;fill:#0f172a}.subtitle{font-size:15px;fill:#475569}
+      .step{font-size:13px;font-weight:700;letter-spacing:.08em;fill:#64748b}.h{font-size:18px;font-weight:700;fill:#0f172a}
+      .body{font-size:14px;fill:#334155}.code{font-family:Menlo,Consolas,monospace;font-size:13px;fill:#0f172a}
+      .arrow{stroke:#334155;stroke-width:2.2;fill:none;marker-end:url(#arrow)}
+      .blue{fill:#dbeafe;stroke:#2563eb}.orange{fill:#ffedd5;stroke:#f97316}.green{fill:#dcfce7;stroke:#16a34a}.gray{fill:#f1f5f9;stroke:#64748b}
+    </style>
+  </defs>
+  <rect class="bg" width="960" height="360"/>
+  <text x="40" y="46" class="title">Soft-Overlap SA Macro Placer</text>
+  <text x="40" y="72" class="subtitle">Minimum-displacement legalization from initial.plc, then legal incremental SA refinement.</text>
+  <rect x="40" y="112" width="180" height="150" rx="10" class="card"/>
+  <text x="62" y="142" class="step">STEP 1</text><text x="62" y="172" class="h">Initial placement</text>
+  <text x="62" y="202" class="body">Use the supplied</text><text x="62" y="224" class="code">initial.plc</text>
+  <rect x="62" y="238" width="40" height="26" rx="3" class="blue"/><rect x="94" y="252" width="48" height="24" rx="3" class="orange"/><rect x="150" y="236" width="32" height="42" rx="3" class="gray"/>
+  <path d="M235 187 L285 187" class="arrow"/>
+  <rect x="300" y="112" width="205" height="150" rx="10" class="card"/>
+  <text x="322" y="142" class="step">STEP 2</text><text x="322" y="172" class="h">Soft-overlap SA</text>
+  <text x="322" y="202" class="body">Penalize overlap area</text><text x="322" y="226" class="code">proxy_est + lambda * overlap</text>
+  <text x="322" y="248" class="body">lambda ramps upward.</text>
+  <path d="M520 187 L570 187" class="arrow"/>
+  <rect x="585" y="112" width="190" height="150" rx="10" class="card"/>
+  <text x="607" y="142" class="step">STEP 3</text><text x="607" y="172" class="h">Legal refinement</text>
+  <text x="607" y="202" class="body">Reject overlap moves.</text><text x="607" y="224" class="body">Update local HPWL,</text><text x="607" y="246" class="body">density and RUDY state.</text>
+  <path d="M790 187 L840 187" class="arrow"/>
+  <rect x="855" y="112" width="70" height="150" rx="10" class="card"/>
+  <text x="872" y="142" class="step">OUT</text><text x="872" y="172" class="h">Legal</text><text x="872" y="202" class="body">0 hard</text><text x="872" y="224" class="body">overlaps</text>
+  <rect x="874" y="240" width="32" height="22" rx="3" class="green"/>
+  <rect x="40" y="298" width="885" height="34" rx="7" class="card"/>
+  <text x="60" y="320" class="body">Official scoring remains the challenge evaluator: proxy = wirelength + 0.5*density + 0.5*congestion.</text>
+</svg>

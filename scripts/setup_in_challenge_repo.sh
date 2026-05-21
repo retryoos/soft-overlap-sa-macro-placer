@@ -13,12 +13,12 @@ if [[ ! -d "$challenge_repo/submissions" || ! -d "$challenge_repo/macro_place" ]
 fi
 
 mkdir -p "$challenge_repo/submissions/retryoos"
-cp placer.py "$challenge_repo/submissions/v57_soft_overlap_sa.py"
+cp placer.py "$challenge_repo/submissions/soft_overlap_sa_macro_placer.py"
 cp submissions/__init__.py "$challenge_repo/submissions/__init__.py"
 cp submissions/retryoos/__init__.py "$challenge_repo/submissions/retryoos/__init__.py"
 cp submissions/retryoos/top1_incremental_sa.py "$challenge_repo/submissions/retryoos/top1_incremental_sa.py"
 cp submissions/retryoos/top1_soft_overlap_sa.py "$challenge_repo/submissions/retryoos/top1_soft_overlap_sa.py"
 cp submissions/retryoos/top1_replace_sa.py "$challenge_repo/submissions/retryoos/top1_replace_sa.py"
 
-echo "Installed V57 Soft-Overlap SA placer into: $challenge_repo/submissions/v57_soft_overlap_sa.py"
-echo "Run: cd \"$challenge_repo\" && uv run evaluate submissions/v57_soft_overlap_sa.py --all"
+echo "Installed Soft-Overlap SA placer into: $challenge_repo/submissions/soft_overlap_sa_macro_placer.py"
+echo "Run: cd \"$challenge_repo\" && uv run evaluate submissions/soft_overlap_sa_macro_placer.py --all"

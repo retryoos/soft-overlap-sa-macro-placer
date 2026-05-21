@@ -1,22 +1,9 @@
 """
-Soft-Overlap True-Proxy SA Legalization
-=========================================
-KEY INSIGHT: initial.plc IS the analytical (RePlAce) placement with small overlaps.
-  ibm01: proxy=1.0385 with only 69 overlaps (RePlAce baseline = 0.9976)
-  ibm09: proxy=1.1126 with 101 overlaps
+Soft-overlap simulated annealing legalization.
 
-Our V46 CD legalization DESTROYS this quality:
-  ibm01: 1.0385 → 1.1808 = 0.18 proxy LOSS from legalization alone!
-
-The fix: Soft-overlap SA that stays near initial.plc while resolving overlaps.
-  Phase 1: cost = true_proxy + lambda * overlap_area_of_moved_macro
-    → SA resolves overlaps via the overlap cost term
-    → lambda ramps up to enforce legality
-  Phase 2: hard-reject standard V55 SA (from near-initial.plc quality)
-  → Expected ibm01: start at 1.04 → legalize to ~1.05 → SA to ~0.92-0.98
-
-Python outer loop calling Numba inner kernels — correct design.
-(Numba JIT cannot do Python imports inside the JIT function.)
+This module keeps the search near the supplied ``initial.plc`` coordinates while
+penalizing hard-macro overlap area. It uses the same incremental HPWL, density
+and RUDY-style state as the refinement kernel for fast candidate scoring.
 """
 import math
 import numpy as np

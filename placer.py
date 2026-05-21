@@ -1,20 +1,10 @@
 """
-V57 Soft-Overlap SA Legalizer + True-Proxy Refiner
-====================================================
-THE BREAKTHROUGH: initial.plc IS the analytical (RePlAce) placement.
-  ibm01 initial.plc: proxy=1.0385 with only 69 overlaps
-  Our V46 legalization destroys this → 1.1808 (+0.18 loss!)
+Soft-overlap simulated annealing macro placer.
 
-V57 fixes this with a 2-phase approach:
-  Phase 1 (Soft-Overlap SA): Start from initial.plc.
-    cost = true_proxy + lambda * overlap_area
-    SA resolves overlaps while preserving analytical quality.
-    After phase 1: ~1.04-1.06 proxy with 0 overlaps (vs 1.18 from V46).
-  Phase 2 (Hard-Reject SA): Standard V55 incremental SA from good start.
-    Expected: ibm01 → 0.92-0.98, full suite → 1.25-1.35 avg.
-
-This is equivalent to what MultiDREAMPlace (#5 leaderboard) calls
-"min-displacement legalization + SA".
+The placer starts from the competition-provided ``initial.plc`` coordinates,
+uses a soft overlap penalty to repair hard-macro legality with low displacement,
+and then refines legal placements with an incremental proxy estimator. The
+official challenge evaluator remains the source of truth for final scoring.
 """
 import sys
 import time
@@ -128,10 +118,10 @@ def _build_numba_inputs(benchmark: Benchmark, pos_start: np.ndarray, gap: float)
     )
 
 
-class V57SoftLegalizeSAPlacer:
+class SoftOverlapSAPlacer:
     """
     Phase 1: Soft-Overlap SA from initial.plc (resolves overlaps minimally).
-    Phase 2: Hard-reject V55 SA from the quality-preserved start.
+    Phase 2: Hard-reject incremental SA from the quality-preserved start.
     """
     def __init__(self, seed: int = 42, gap: float = 0.005,
                  wall_target_small: float = 900.0,
@@ -172,8 +162,8 @@ class V57SoftLegalizeSAPlacer:
         c0 = compute_proxy_cost(t_init, benchmark, plc) if plc else None
         init_proxy = c0["proxy_cost"] if c0 else 0
         init_overlaps = ov0["overlap_count"]
-        print(f"  [V57] N={N} K={benchmark.num_nets} wall={wall_target:.0f}s")
-        print(f"  [V57] initial.plc: proxy={init_proxy:.4f} overlaps={init_overlaps}")
+        print(f"  [SoftOverlapSA] N={N} K={benchmark.num_nets} wall={wall_target:.0f}s")
+        print(f"  [SoftOverlapSA] initial.plc: proxy={init_proxy:.4f} overlaps={init_overlaps}")
 
         d = _build_numba_inputs(benchmark, pos_start, self.gap)
 
@@ -207,7 +197,7 @@ class V57SoftLegalizeSAPlacer:
 
         # === Phase 1: Soft-Overlap SA Legalization ===
         if init_overlaps > 0:
-            print(f"  [V57] Phase 1: Soft-overlap SA ({self.soft_iters:,} iters) ...")
+            print(f"  [SoftOverlapSA] Phase 1: Soft-overlap SA ({self.soft_iters:,} iters) ...")
             t_p1 = time.time()
 
             # Calibrate lambda: start with proxy/overlap balance
@@ -241,30 +231,30 @@ class V57SoftLegalizeSAPlacer:
             c_mid = compute_proxy_cost(t_mid, benchmark, plc) if plc else None
             mid_proxy = c_mid["proxy_cost"] if c_mid else 0
             mid_overlaps = ov_mid["overlap_count"]
-            print(f"  [V57] Phase 1 done in {time.time()-t_p1:.0f}s: "
+            print(f"  [SoftOverlapSA] Phase 1 done in {time.time()-t_p1:.0f}s: "
                   f"proxy={mid_proxy:.4f} overlaps={mid_overlaps} accepts={accepts_soft:,}")
 
             # If still overlapping, fall back to V8 micro-legalize for remaining
             if mid_overlaps > 0:
-                print(f"  [V57] Still {mid_overlaps} overlaps — applying V8 micro-legalize...")
+                print(f"  [SoftOverlapSA] Still {mid_overlaps} overlaps; applying V8 micro-legalize...")
                 from macro_place.sa_v49 import _micro_legalize
                 pos_soft = _micro_legalize(pos_soft, d["movable_idx"], benchmark, self.gap)
                 pos_mid[:n_hard] = pos_soft
                 t_mid2 = torch.tensor(pos_mid, dtype=torch.float32)
                 ov_mid2 = compute_overlap_metrics(t_mid2, benchmark)
                 c_mid2 = compute_proxy_cost(t_mid2, benchmark, plc) if plc else None
-                print(f"  [V57] After micro-legalize: proxy={c_mid2['proxy_cost'] if c_mid2 else 0:.4f} "
+                print(f"  [SoftOverlapSA] After micro-legalize: proxy={c_mid2['proxy_cost'] if c_mid2 else 0:.4f} "
                       f"overlaps={ov_mid2['overlap_count']}")
 
             sa_start_pos = pos_soft
         else:
-            print(f"  [V57] No overlaps in initial.plc — skipping Phase 1")
+            print(f"  [SoftOverlapSA] No overlaps in initial.plc; skipping Phase 1")
             sa_start_pos = pos_start[:n_hard].copy()
 
-        # === Phase 2: Hard-reject V55 SA ===
+        # === Phase 2: Hard-reject incremental SA ===
         setup_elapsed = time.time() - t0
         sa_wall = max(60.0, wall_target - setup_elapsed)
-        print(f"  [V57] Phase 2: Hard-reject SA (wall_budget={sa_wall:.0f}s) ...")
+        print(f"  [SoftOverlapSA] Phase 2: Hard-reject SA (wall_budget={sa_wall:.0f}s) ...")
 
         # Rebuild inputs using the soft-legalized positions
         pos_for_phase2 = pos_start.copy()
@@ -306,7 +296,7 @@ class V57SoftLegalizeSAPlacer:
             chunk_seed += 1
 
         sa_elapsed = time.time() - sa_t0
-        print(f"  [V57] Phase 2 done: iters={total_iters:,} accepts={total_accepts:,} "
+        print(f"  [SoftOverlapSA] Phase 2 done: iters={total_iters:,} accepts={total_accepts:,} "
               f"t={sa_elapsed:.0f}s iters/s={total_iters/max(1,sa_elapsed):.0f}")
 
         full_pos = benchmark.macro_positions.clone()
@@ -314,7 +304,7 @@ class V57SoftLegalizeSAPlacer:
 
         if plc is not None:
             c = compute_proxy_cost(full_pos, benchmark, plc)
-            print(f"  [V57] Done in {time.time()-t0:.0f}s. Final proxy={c['proxy_cost']:.4f}")
+            print(f"  [SoftOverlapSA] Done in {time.time()-t0:.0f}s. Final proxy={c['proxy_cost']:.4f}")
 
         return full_pos
 

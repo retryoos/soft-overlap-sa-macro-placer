@@ -5,8 +5,8 @@ These are the values to paste into the Partcl x HRT Macro Placement Challenge 20
 | Field | Value |
 | --- | --- |
 | Team Name | RetryOOS |
-| Name of Method | V57 Soft-Overlap SA |
-| Short Description | Two-phase simulated annealing placer that starts from the provided analytical initial placement, resolves overlaps with a true-proxy plus overlap-area soft penalty, then refines legal placements with an incremental hard-reject true-proxy SA loop. |
+| Name of Method | Soft-Overlap SA Macro Placer |
+| Short Description | Two-phase simulated annealing placer that starts from the provided initial placement, resolves hard-macro overlaps with an incremental proxy plus overlap-area soft penalty, then refines legal placements with an incremental hard-reject SA loop. |
 | Link to Github repository with implementation | https://github.com/retryoos/soft-overlap-sa-macro-placer |
 | Average proxy cost on IBM benchmarks | 1.4734 |
 | Average runtime on IBM benchmarks | Internal validated run: about 56 minutes total for all 17 IBM benchmarks. Per-benchmark wall targets are 900s, 1200s, or 1800s depending on movable macro count, each below the 1-hour benchmark cap. |

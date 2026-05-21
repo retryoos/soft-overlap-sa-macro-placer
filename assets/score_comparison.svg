@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360" role="img" aria-labelledby="title desc">
   <title id="title">Average proxy cost comparison</title>
-  <desc id="desc">Average proxy cost bars: V57 1.4734, RePlAce 1.4578, SA 2.1251. Lower is better.</desc>
+  <desc id="desc">Average proxy cost bars: submission 1.4734, RePlAce 1.4578, SA 2.1251. Lower is better.</desc>
   <defs>
     <style>
       .bg{fill:#f8fafc}.axis{stroke:#334155;stroke-width:2}.grid{stroke:#cbd5e1;stroke-width:1}.label{font:15px Arial,sans-serif;fill:#334155}.title{font:700 24px Arial,sans-serif;fill:#0f172a}.value{font:700 16px Arial,sans-serif;fill:#0f172a}.note{font:14px Arial,sans-serif;fill:#475569}
@@ -8,7 +8,7 @@
   </defs>
   <rect width="900" height="360" class="bg"/>
   <text x="40" y="45" class="title">Average Proxy Cost on 17 IBM ICCAD04 Benchmarks</text>
-  <text x="40" y="72" class="note">Lower is better. V57 is the team validated full-suite run recorded in project notes.</text>
+  <text x="40" y="72" class="note">Lower is better. Submission score is a local development aggregate.</text>
   <line x1="170" y1="285" x2="820" y2="285" class="axis"/>
   <line x1="170" y1="95" x2="170" y2="285" class="axis"/>
   <line x1="170" y1="245" x2="820" y2="245" class="grid"/>
@@ -24,9 +24,9 @@
   <rect x="170" y="170" width="408" height="30" fill="#64748b"/>
   <text x="590" y="192" class="value">1.4578</text>
 
-  <text x="48" y="259" class="label">V57</text>
+  <text x="48" y="259" class="label">Submission</text>
   <rect x="170" y="235" width="413" height="30" fill="#2563eb"/>
   <text x="595" y="257" class="value">1.4734</text>
 
-  <text x="170" y="316" class="note">V57 improves over SA by about 30.7%; it is within about 1.1% of the RePlAce proxy baseline.</text>
+  <text x="170" y="316" class="note">The local aggregate improves over SA and is within about 1.1% of RePlAce.</text>
 </svg>

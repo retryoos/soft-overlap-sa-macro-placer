@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Generate data-backed artifacts for the V57 submission README.
+Generate data-backed artifacts for the submission README.
 
 Default mode is quick and has no plotting dependency: it writes SVG charts and
-JSON from published baselines plus the recorded V57 aggregate score. With
+JSON from published baselines plus the recorded submission aggregate score. With
 --challenge-repo, the script can also load a real IBM benchmark. With
---run-placer it runs V57 and emits placement PNGs and an animated GIF; that mode
+--run-placer it runs the placer and emits placement PNGs and an animated GIF; that mode
 requires matplotlib and Pillow.
 """
 
@@ -60,8 +60,8 @@ REPLACE_BASELINES = {
     "ibm18": 1.7722,
 }
 
-V57_AVG_PROXY = 1.4734
-V57_TOTAL_RUNTIME_S = 56.0 * 60.0
+SUBMISSION_AVG_PROXY = 1.4734
+SUBMISSION_TOTAL_RUNTIME_S = 56.0 * 60.0
 
 
 @dataclass
@@ -83,19 +83,19 @@ def ensure_out_dir(out_dir: Path) -> None:
 
 
 def save_static_score_artifacts(out_dir: Path) -> None:
-    names = ["V57", "RePlAce", "SA"]
+    names = ["Submission", "RePlAce", "SA"]
     values = [
-        V57_AVG_PROXY,
+        SUBMISSION_AVG_PROXY,
         sum(REPLACE_BASELINES[b] for b in IBM_BENCHMARKS) / len(IBM_BENCHMARKS),
         sum(SA_BASELINES[b] for b in IBM_BENCHMARKS) / len(IBM_BENCHMARKS),
     ]
     summary = {
-        "v57_avg_proxy": V57_AVG_PROXY,
-        "v57_total_runtime_s": V57_TOTAL_RUNTIME_S,
+        "submission_avg_proxy": SUBMISSION_AVG_PROXY,
+        "submission_total_runtime_s": SUBMISSION_TOTAL_RUNTIME_S,
         "replace_avg_proxy": values[1],
         "sa_avg_proxy": values[2],
-        "v57_improvement_vs_sa_pct": (values[2] - V57_AVG_PROXY) / values[2] * 100.0,
-        "v57_delta_vs_replace_pct": (V57_AVG_PROXY - values[1]) / values[1] * 100.0,
+        "submission_improvement_vs_sa_pct": (values[2] - SUBMISSION_AVG_PROXY) / values[2] * 100.0,
+        "submission_delta_vs_replace_pct": (SUBMISSION_AVG_PROXY - values[1]) / values[1] * 100.0,
     }
     (out_dir / "score_summary.json").write_text(json.dumps(summary, indent=2) + "\n")
 
@@ -119,11 +119,11 @@ def save_static_score_svgs(out_dir: Path, names: list[str], values: list[float])
     avg_svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="860" height="350" viewBox="0 0 860 350">
   <style>.bg{{fill:#f8fafc}}.title{{font:700 24px Arial,sans-serif;fill:#0f172a}}.note{{font:14px Arial,sans-serif;fill:#475569}}.label{{font:16px Arial,sans-serif;fill:#334155}}.value{{font:700 16px Arial,sans-serif;fill:#0f172a}}.axis{{stroke:#334155;stroke-width:2}}</style>
   <rect class="bg" width="860" height="350"/>
-  <text x="40" y="45" class="title">V57 vs Published IBM ICCAD04 Baselines</text>
+  <text x="40" y="45" class="title">Submission vs Published IBM ICCAD04 Baselines</text>
   <text x="40" y="72" class="note">Average proxy cost, lower is better.</text>
   <line x1="170" y1="300" x2="760" y2="300" class="axis"/>
   {"".join(rows)}
-  <text x="40" y="330" class="note">V57 score is the team recorded full-suite validation; baselines are from the challenge README.</text>
+  <text x="40" y="330" class="note">Submission score is a local development aggregate; baselines are from the challenge README.</text>
 </svg>
 """
     (out_dir / "avg_proxy_comparison.svg").write_text(avg_svg)
@@ -134,7 +134,7 @@ def save_static_score_svgs(out_dir: Path, names: list[str], values: list[float])
         x = 70 + idx * 42
         points_sa.append(f"{x},{290 - SA_BASELINES[bench] / 3.8 * 220:.1f}")
         points_rep.append(f"{x},{290 - REPLACE_BASELINES[bench] / 3.8 * 220:.1f}")
-    y_v57 = 290 - V57_AVG_PROXY / 3.8 * 220
+    y_submission = 290 - SUBMISSION_AVG_PROXY / 3.8 * 220
     labels = "".join(
         f'<text x="{70 + idx * 42}" y="318" class="tick" transform="rotate(45 {70 + idx * 42} 318)">{bench}</text>'
         for idx, bench in enumerate(IBM_BENCHMARKS)
@@ -142,20 +142,20 @@ def save_static_score_svgs(out_dir: Path, names: list[str], values: list[float])
     curve_svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="860" height="390" viewBox="0 0 860 390">
   <style>.bg{{fill:#f8fafc}}.title{{font:700 22px Arial,sans-serif;fill:#0f172a}}.tick{{font:11px Arial,sans-serif;fill:#475569}}.legend{{font:14px Arial,sans-serif;fill:#334155}}.axis{{stroke:#334155;stroke-width:2}}.grid{{stroke:#e2e8f0;stroke-width:1}}</style>
   <rect class="bg" width="860" height="390"/>
-  <text x="40" y="42" class="title">Published Baselines With V57 Aggregate Reference</text>
+  <text x="40" y="42" class="title">Published Baselines With Submission Aggregate Reference</text>
   <line x1="55" y1="290" x2="790" y2="290" class="axis"/>
   <line x1="55" y1="65" x2="55" y2="290" class="axis"/>
   <line x1="55" y1="160" x2="790" y2="160" class="grid"/>
   <polyline points="{' '.join(points_sa)}" fill="none" stroke="#ef4444" stroke-width="3"/>
   <polyline points="{' '.join(points_rep)}" fill="none" stroke="#64748b" stroke-width="3"/>
-  <line x1="55" y1="{y_v57:.1f}" x2="790" y2="{y_v57:.1f}" stroke="#2563eb" stroke-width="3"/>
+  <line x1="55" y1="{y_submission:.1f}" x2="790" y2="{y_submission:.1f}" stroke="#2563eb" stroke-width="3"/>
   {labels}
   <text x="610" y="74" class="legend">SA baseline</text>
   <text x="610" y="96" class="legend">RePlAce baseline</text>
-  <text x="610" y="118" class="legend">V57 aggregate</text>
+  <text x="610" y="118" class="legend">Submission aggregate</text>
 </svg>
 """
-    (out_dir / "baseline_curve_with_v57_avg.svg").write_text(curve_svg)
+    (out_dir / "baseline_curve_with_submission_avg.svg").write_text(curve_svg)
 
 
 def save_static_score_pngs(out_dir: Path, names: list[str], values: list[float]) -> None:
@@ -164,7 +164,7 @@ def save_static_score_pngs(out_dir: Path, names: list[str], values: list[float])
     ax.barh(names, values, color=colors)
     ax.invert_yaxis()
     ax.set_xlabel("Average proxy cost, lower is better")
-    ax.set_title("V57 vs Published IBM ICCAD04 Baselines")
+    ax.set_title("Submission vs Published IBM ICCAD04 Baselines")
     ax.grid(axis="x", color="#e2e8f0", linewidth=1)
     ax.set_axisbelow(True)
     for idx, val in enumerate(values):
@@ -177,15 +177,15 @@ def save_static_score_pngs(out_dir: Path, names: list[str], values: list[float])
     fig, ax = plt.subplots(figsize=(12, 5.2), dpi=160)
     ax.plot(bench, [SA_BASELINES[b] for b in IBM_BENCHMARKS], marker="o", label="SA baseline")
     ax.plot(bench, [REPLACE_BASELINES[b] for b in IBM_BENCHMARKS], marker="o", label="RePlAce baseline")
-    ax.axhline(V57_AVG_PROXY, color="#2563eb", linewidth=2.4, label="V57 aggregate")
+    ax.axhline(SUBMISSION_AVG_PROXY, color="#2563eb", linewidth=2.4, label="Submission aggregate")
     ax.set_xticks(bench)
     ax.set_xticklabels(IBM_BENCHMARKS, rotation=45, ha="right")
     ax.set_ylabel("Proxy cost")
-    ax.set_title("Published Per-Benchmark Baselines With V57 Aggregate Reference")
+    ax.set_title("Published Per-Benchmark Baselines With Submission Aggregate Reference")
     ax.grid(color="#e2e8f0", linewidth=1)
     ax.legend(loc="upper left", frameon=False)
     fig.tight_layout()
-    fig.savefig(out_dir / "baseline_curve_with_v57_avg.png", bbox_inches="tight")
+    fig.savefig(out_dir / "baseline_curve_with_submission_avg.png", bbox_inches="tight")
     plt.close(fig)
 
 
@@ -264,7 +264,7 @@ def render_component_chart(path: Path, initial: PlacementMetrics, final: Placeme
     width = 0.36
     fig, ax = plt.subplots(figsize=(8, 4.8), dpi=160)
     ax.bar(x - width / 2, init_values, width, label="initial.plc", color="#94a3b8")
-    ax.bar(x + width / 2, final_values, width, label="V57 output", color="#2563eb")
+    ax.bar(x + width / 2, final_values, width, label="final output", color="#2563eb")
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.set_ylabel("Cost contribution")
@@ -330,23 +330,23 @@ def run_real_benchmark_artifacts(out_dir: Path, challenge_repo: Path, benchmark_
                          f"{benchmark_name} initial.plc", initial_metrics)
         if not run_placer:
             return
-        from placer import V57SoftLegalizeSAPlacer
+        from placer import SoftOverlapSAPlacer
 
-        placer = V57SoftLegalizeSAPlacer()
+        placer = SoftOverlapSAPlacer()
         start = time.time()
         final = placer.place(benchmark)
         runtime = time.time() - start
         final_metrics = compute_metrics(final, benchmark, plc)
         final_metrics.runtime_s = runtime
         final_np = final[:hard_n].detach().cpu().numpy()
-        render_placement(out_dir / f"{benchmark_name}_v57_final.png", final_np, sizes, fixed,
+        render_placement(out_dir / f"{benchmark_name}_final.png", final_np, sizes, fixed,
                          benchmark.canvas_width, benchmark.canvas_height,
-                         f"{benchmark_name} V57 output", final_metrics)
+                         f"{benchmark_name} final output", final_metrics)
         render_component_chart(out_dir / f"{benchmark_name}_objective_components.png", initial_metrics, final_metrics)
-        save_interpolation_gif(out_dir / f"{benchmark_name}_initial_to_v57.gif", initial_np, final_np, sizes, fixed,
+        save_interpolation_gif(out_dir / f"{benchmark_name}_initial_to_final.gif", initial_np, final_np, sizes, fixed,
                                benchmark.canvas_width, benchmark.canvas_height,
-                               f"{benchmark_name}: initial.plc to V57 output")
-        metrics = {"benchmark": benchmark_name, "initial": initial_metrics.__dict__, "v57": final_metrics.__dict__}
+                               f"{benchmark_name}: initial.plc to final output")
+        metrics = {"benchmark": benchmark_name, "initial": initial_metrics.__dict__, "final": final_metrics.__dict__}
         (out_dir / f"{benchmark_name}_metrics.json").write_text(json.dumps(metrics, indent=2) + "\n")
     finally:
         os.chdir(original_cwd)
@@ -358,7 +358,7 @@ def parse_args(argv: Iterable[str]) -> argparse.Namespace:
     parser.add_argument("--challenge-repo", type=Path, default=None)
     parser.add_argument("--benchmark", default="ibm01", choices=IBM_BENCHMARKS)
     parser.add_argument("--run-placer", action="store_true",
-                        help="Run V57 on the selected benchmark and emit final placement/GIF artifacts.")
+                        help="Run the placer on the selected benchmark and emit final placement/GIF artifacts.")
     return parser.parse_args(list(argv))
 
 
