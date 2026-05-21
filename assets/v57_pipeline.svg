@@ -1,50 +1,140 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="360" viewBox="0 0 1100 360" role="img" aria-labelledby="title desc">
-  <title id="title">V57 Soft-Overlap SA pipeline</title>
-  <desc id="desc">Pipeline from initial placement through soft-overlap legalization and hard-reject simulated annealing to final legal placement.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820" role="img" aria-labelledby="title desc">
+  <title id="title">V57 Soft-Overlap SA macro placement method</title>
+  <desc id="desc">Technical diagram of V57: initial placement, soft-overlap legalization, hard-reject incremental simulated annealing, and final legal placement.</desc>
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f2937"/>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#111827"/>
     </marker>
     <style>
-      .bg{fill:#f8fafc}.box{fill:#fff;stroke:#334155;stroke-width:2;rx:8}.main{font:700 22px Arial,sans-serif;fill:#0f172a}.sub{font:15px Arial,sans-serif;fill:#334155}.small{font:13px Arial,sans-serif;fill:#475569}.arrow{stroke:#1f2937;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.chip{fill:#dbeafe;stroke:#2563eb;stroke-width:1.5}.bad{fill:#fee2e2;stroke:#dc2626}.good{fill:#dcfce7;stroke:#16a34a}.accent{fill:#fef3c7;stroke:#d97706}
+      text{font-family:Inter,Arial,sans-serif}
+      .page{fill:#f8fafc}
+      .panel{fill:#ffffff;stroke:#cbd5e1;stroke-width:1.5}
+      .stage{fill:#ffffff;stroke:#334155;stroke-width:2}
+      .floor{fill:#f1f5f9;stroke:#334155;stroke-width:1.2}
+      .macro{fill:#2563eb;stroke:#0f172a;stroke-width:1.1}
+      .macro2{fill:#0f766e;stroke:#0f172a;stroke-width:1.1}
+      .fixed{fill:#ef4444;stroke:#0f172a;stroke-width:1.1}
+      .overlap{fill:#f97316;stroke:#9a3412;stroke-width:1.2;opacity:.82}
+      .legal{fill:#22c55e;stroke:#166534;stroke-width:1.1}
+      .wire{stroke:#64748b;stroke-width:1.3;fill:none;opacity:.65}
+      .arrow{stroke:#111827;stroke-width:2.4;fill:none;marker-end:url(#arrow)}
+      .thin{stroke:#94a3b8;stroke-width:1;fill:none}
+      .tag{font-size:13px;font-weight:700;letter-spacing:.06em;fill:#334155}
+      .h1{font-size:32px;font-weight:800;fill:#0f172a}
+      .h2{font-size:21px;font-weight:800;fill:#0f172a}
+      .body{font-size:15px;fill:#334155}
+      .small{font-size:13px;fill:#475569}
+      .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;fill:#0f172a}
+      .metric{font-size:23px;font-weight:800;fill:#0f172a}
+      .metricLabel{font-size:12px;font-weight:700;letter-spacing:.08em;fill:#64748b}
     </style>
   </defs>
-  <rect width="1100" height="360" class="bg"/>
-  <text x="40" y="46" class="main">V57 Soft-Overlap SA Macro Placer</text>
-  <text x="40" y="72" class="sub">Preserve the analytical initial placement, remove overlaps with a soft penalty, then refine with incremental true-proxy SA.</text>
 
-  <rect x="45" y="115" width="220" height="150" class="box"/>
-  <text x="70" y="145" class="main">1. Initial PLC</text>
-  <text x="70" y="174" class="sub">Start from evaluator-provided</text>
-  <text x="70" y="196" class="sub">analytical placement.</text>
-  <rect x="78" y="218" width="42" height="24" class="chip"/>
-  <rect x="110" y="230" width="48" height="20" class="bad"/>
-  <rect x="168" y="212" width="56" height="34" class="chip"/>
-  <text x="70" y="286" class="small">High quality, but may overlap.</text>
+  <rect class="page" width="1400" height="820"/>
 
-  <path d="M 282 190 L 352 190" class="arrow"/>
+  <text x="58" y="62" class="h1">V57 Soft-Overlap SA Macro Placer</text>
+  <text x="58" y="92" class="body">Minimum-displacement legalization from initial.plc, followed by incremental true-proxy simulated annealing.</text>
 
-  <rect x="370" y="115" width="250" height="150" class="box"/>
-  <text x="395" y="145" class="main">2. Soft Legalize</text>
-  <text x="395" y="174" class="sub">Optimize true proxy plus</text>
-  <text x="395" y="196" class="sub">lambda x overlap area.</text>
-  <text x="395" y="224" class="small">lambda ramps upward</text>
-  <text x="395" y="246" class="small">to force strict legality.</text>
-  <rect x="515" y="212" width="42" height="24" class="chip"/>
-  <rect x="470" y="232" width="48" height="20" class="accent"/>
-  <rect x="552" y="228" width="42" height="30" class="chip"/>
+  <rect x="930" y="38" width="122" height="58" rx="6" class="panel"/>
+  <text x="948" y="62" class="metric">1.4734</text>
+  <text x="948" y="84" class="metricLabel">AVG PROXY</text>
+  <rect x="1070" y="38" width="104" height="58" rx="6" class="panel"/>
+  <text x="1094" y="62" class="metric">0</text>
+  <text x="1091" y="84" class="metricLabel">OVERLAPS</text>
+  <rect x="1192" y="38" width="150" height="58" rx="6" class="panel"/>
+  <text x="1210" y="62" class="metric">&lt;=1h</text>
+  <text x="1210" y="84" class="metricLabel">PER BENCH CAP</text>
 
-  <path d="M 638 190 L 708 190" class="arrow"/>
+  <rect x="58" y="132" width="292" height="292" rx="8" class="stage"/>
+  <text x="82" y="166" class="tag">INPUT</text>
+  <text x="82" y="196" class="h2">initial.plc</text>
+  <text x="82" y="222" class="body">Start from the evaluator-provided</text>
+  <text x="82" y="244" class="body">analytical placement.</text>
+  <text x="82" y="266" class="small">Strong proxy quality, but small hard-</text>
+  <text x="82" y="284" class="small">macro overlaps can remain.</text>
+  <rect x="86" y="304" width="218" height="84" rx="4" class="floor"/>
+  <path d="M116 374 C154 328 205 358 264 318" class="wire"/>
+  <path d="M122 324 C168 340 218 322 276 374" class="wire"/>
+  <rect x="112" y="328" width="54" height="34" rx="2" class="macro"/>
+  <rect x="156" y="348" width="58" height="30" rx="2" class="overlap"/>
+  <rect x="225" y="318" width="44" height="54" rx="2" class="macro2"/>
+  <rect x="248" y="372" width="30" height="14" rx="2" class="fixed"/>
+  <text x="86" y="408" class="small">Orange marks overlap pressure.</text>
 
-  <rect x="725" y="115" width="330" height="150" class="box"/>
-  <text x="750" y="145" class="main">3. Hard-Reject SA</text>
-  <text x="750" y="174" class="sub">Incremental updates for HPWL,</text>
-  <text x="750" y="196" class="sub">density, and RUDY congestion.</text>
-  <text x="750" y="224" class="small">Reject overlap moves, accept proxy</text>
-  <text x="750" y="246" class="small">moves by Metropolis criterion.</text>
-  <rect x="935" y="206" width="42" height="24" class="good"/>
-  <rect x="884" y="236" width="48" height="20" class="good"/>
-  <rect x="995" y="232" width="42" height="30" class="good"/>
+  <path d="M368 278 L448 278" class="arrow"/>
 
-  <text x="45" y="322" class="sub">Objective: proxy cost = wirelength + 0.5 density + 0.5 congestion. Constraint: zero hard-macro overlaps.</text>
+  <rect x="466" y="132" width="336" height="292" rx="8" class="stage"/>
+  <text x="490" y="166" class="tag">PHASE 1</text>
+  <text x="490" y="196" class="h2">Soft-overlap legalization</text>
+  <text x="490" y="222" class="body">Use overlap area as a penalty so SA</text>
+  <text x="490" y="244" class="body">repairs legality with low displacement.</text>
+  <rect x="490" y="270" width="288" height="56" rx="6" class="panel"/>
+  <text x="510" y="303" class="mono">soft_cost = proxy + lambda * overlap</text>
+  <text x="490" y="352" class="small">lambda ramps upward: early moves keep</text>
+  <text x="490" y="370" class="small">quality, late moves force legality.</text>
+  <rect x="530" y="390" width="214" height="24" rx="12" fill="#ecfeff" stroke="#0f766e"/>
+  <text x="562" y="407" class="small">minimum-displacement repair</text>
+
+  <path d="M820 278 L900 278" class="arrow"/>
+
+  <rect x="918" y="132" width="374" height="292" rx="8" class="stage"/>
+  <text x="942" y="166" class="tag">PHASE 2</text>
+  <text x="942" y="196" class="h2">Hard-reject incremental SA</text>
+  <text x="942" y="222" class="body">Legal candidate moves are scored.</text>
+  <text x="942" y="244" class="body">Overlap-creating moves are rejected.</text>
+  <rect x="942" y="270" width="154" height="42" rx="6" fill="#fef2f2" stroke="#ef4444"/>
+  <text x="966" y="297" class="small">if overlap: reject</text>
+  <rect x="1114" y="270" width="142" height="42" rx="6" fill="#f0fdf4" stroke="#22c55e"/>
+  <text x="1136" y="297" class="small">else: score</text>
+  <text x="942" y="344" class="body">Incremental state per accepted move:</text>
+  <text x="962" y="372" class="small">net boxes for touched nets</text>
+  <text x="962" y="394" class="small">density bins under moved macro</text>
+  <text x="962" y="416" class="small">RUDY bins for affected net boxes</text>
+
+  <rect x="58" y="472" width="386" height="246" rx="8" class="panel"/>
+  <text x="82" y="508" class="h2">Cost Model</text>
+  <text x="82" y="540" class="mono">proxy = WL + 0.5*density + 0.5*congestion</text>
+  <line x1="82" y1="568" x2="396" y2="568" class="thin"/>
+  <text x="82" y="600" class="body">Wirelength</text>
+  <rect x="190" y="586" width="136" height="20" fill="#bfdbfe"/>
+  <text x="82" y="636" class="body">Density</text>
+  <rect x="190" y="622" width="88" height="20" fill="#99f6e4"/>
+  <text x="82" y="672" class="body">Congestion</text>
+  <rect x="190" y="658" width="108" height="20" fill="#fed7aa"/>
+  <text x="82" y="704" class="small">The SA loop optimizes the same terms</text>
+  <text x="82" y="722" class="small">used by the challenge evaluator.</text>
+
+  <rect x="486" y="472" width="372" height="246" rx="8" class="panel"/>
+  <text x="510" y="508" class="h2">Move Loop</text>
+  <rect x="524" y="536" width="100" height="40" rx="6" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="548" y="561" class="small">sample</text>
+  <path d="M630 556 L684 556" class="arrow"/>
+  <rect x="692" y="536" width="100" height="40" rx="6" fill="#f8fafc" stroke="#334155"/>
+  <text x="716" y="561" class="small">check</text>
+  <path d="M742 582 L742 626" class="arrow"/>
+  <rect x="660" y="636" width="164" height="40" rx="6" fill="#f0fdf4" stroke="#22c55e"/>
+  <text x="688" y="661" class="small">Metropolis accept</text>
+  <path d="M652 656 L596 656" class="arrow"/>
+  <rect x="504" y="636" width="86" height="40" rx="6" fill="#fef2f2" stroke="#ef4444"/>
+  <text x="528" y="661" class="small">undo</text>
+  <path d="M546 632 L546 582" class="arrow"/>
+  <text x="510" y="704" class="small">Small local moves preserve legality</text>
+  <text x="510" y="722" class="small">and exploit the strong initial solution.</text>
+
+  <rect x="900" y="472" width="392" height="246" rx="8" class="stage"/>
+  <text x="924" y="508" class="tag">OUTPUT</text>
+  <text x="924" y="538" class="h2">Legal macro placement</text>
+  <rect x="940" y="566" width="220" height="118" rx="4" class="floor"/>
+  <path d="M966 640 C1006 600 1050 642 1128 590" class="wire"/>
+  <path d="M970 592 C1014 620 1074 596 1138 652" class="wire"/>
+  <rect x="974" y="594" width="54" height="34" rx="2" class="legal"/>
+  <rect x="1042" y="632" width="58" height="32" rx="2" class="legal"/>
+  <rect x="1104" y="584" width="44" height="54" rx="2" class="legal"/>
+  <rect x="1002" y="652" width="30" height="26" rx="2" class="fixed"/>
+  <text x="1180" y="606" class="metric">0</text>
+  <text x="1180" y="630" class="metricLabel">HARD OVERLAPS</text>
+  <text x="924" y="704" class="small">Returned through the standard challenge</text>
+  <text x="924" y="722" class="small">placer API as a placement tensor.</text>
+
+  <text x="58" y="770" class="small">Descriptive method diagram. Reproducible score and placement artifacts are generated by scripts/generate_artifacts.py.</text>
 </svg>
