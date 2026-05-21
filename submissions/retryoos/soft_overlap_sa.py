@@ -9,7 +9,7 @@ import math
 import numpy as np
 
 # Import Numba kernels from existing modules (static import only)
-from submissions.retryoos.top1_incremental_sa import (
+from submissions.retryoos.incremental_sa import (
     _init_state,
     _compute_topk_cost,
     _apply_move,

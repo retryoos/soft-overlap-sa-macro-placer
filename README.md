@@ -60,9 +60,9 @@ The `1.4734` figure is a local development result and has not been organizer-ver
 
 ```text
 placer.py                                  # submission entry point
-submissions/retryoos/top1_incremental_sa.py # incremental SA kernels
-submissions/retryoos/top1_soft_overlap_sa.py # soft-overlap legalization
-submissions/retryoos/top1_replace_sa.py      # PlacementCost loading helper
+submissions/retryoos/incremental_sa.py # incremental SA kernels
+submissions/retryoos/soft_overlap_sa.py # soft-overlap legalization
+submissions/retryoos/replace_sa.py      # PlacementCost loading helper
 scripts/setup_in_challenge_repo.sh           # install into official repo
 scripts/setup_in_challenge_repo.bat
 scripts/evaluate_all.sh

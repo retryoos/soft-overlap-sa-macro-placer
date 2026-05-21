@@ -17,13 +17,13 @@ sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 
 from macro_place.benchmark import Benchmark
 from macro_place.objective import compute_proxy_cost, compute_overlap_metrics
-from submissions.retryoos.top1_incremental_sa import run_incremental_sa
-from submissions.retryoos.top1_soft_overlap_sa import (
+from submissions.retryoos.incremental_sa import run_incremental_sa
+from submissions.retryoos.soft_overlap_sa import (
     run_soft_overlap_sa,
     _build_sep_tables,
     _total_overlap_area,
 )
-from submissions.retryoos.top1_replace_sa import _load_plc
+from submissions.retryoos.replace_sa import _load_plc
 
 
 _CHUNK_SIZE = 200_000

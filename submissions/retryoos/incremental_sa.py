@@ -1,7 +1,7 @@
 """
 Incremental proxy simulated annealing (Numba JIT).
 
-The slow reference SA in `top1_replace_sa.py` recomputes the entire net bbox
+The slow reference SA in `replace_sa.py` recomputes the entire net bbox
 sweep, RUDY grid, density grid and sort on every iteration. This module keeps
 that state incrementally so the inner loop can explore many more legal moves.
 
@@ -15,7 +15,7 @@ INCREMENTALLY on each move (touching only nets containing the moved macro):
 Symmetric make/unmake pattern: same function applied with reverse args undoes.
 
 IMPORTANT: this module uses @numba.njit(cache=True). DO NOT load it via
-importlib — static `from submissions.retryoos.top1_incremental_sa import ...`
+importlib — static `from submissions.retryoos.incremental_sa import ...`
 only, to avoid cache corruption.
 """
 import numpy as np
