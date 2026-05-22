@@ -13,7 +13,10 @@ from pathlib import Path
 import numpy as np
 import torch
 
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+_HERE = Path(__file__).resolve()
+for _path in (_HERE.parent, _HERE.parent.parent):
+    if str(_path) not in sys.path:
+        sys.path.append(str(_path))
 
 from macro_place.benchmark import Benchmark
 from macro_place.objective import compute_proxy_cost, compute_overlap_metrics

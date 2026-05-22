@@ -44,17 +44,40 @@ The incremental proxy estimator is used only to accelerate local search inside t
 
 ## Results
 
-Development aggregate recorded for this implementation:
+Full-suite result from a local Mac run of the official `evaluate --all` harness:
 
 | Method | Avg Proxy Cost | Overlaps | Runtime |
 | --- | ---: | ---: | --- |
-| Soft-Overlap SA placer | 1.4734 | 0 | ~56 minutes total runtime across the 17 IBM benchmarks on the local development environment |
+| Soft-Overlap SA placer | 1.4713 | 0 hard-macro overlaps | 20.2 min/benchmark average; 5h44m total |
 | RePlAce baseline | 1.4578 | 0 | Organizer baseline |
 | SA baseline | 2.1251 | 0 | Organizer baseline |
 
 ![Score comparison](assets/score_comparison.svg)
 
-The `1.4734` figure is a local development result and has not been organizer-verified.
+The `1.4713` figure is a local development result and has not been organizer-verified. It improves substantially over the SA baseline but is about 0.9% worse than the published RePlAce average. The executable implementation is the source of truth; judges should re-run the official evaluator in their environment.
+
+Per-benchmark local run details:
+
+| Benchmark | Proxy | Runtime | Hard-Macro Overlaps |
+| --- | ---: | ---: | ---: |
+| ibm01 | 1.1406 | 15.0 min | 0 |
+| ibm02 | 1.5406 | 15.0 min | 0 |
+| ibm03 | 1.3491 | 15.0 min | 0 |
+| ibm04 | 1.3655 | 15.0 min | 0 |
+| ibm06 | 1.6515 | 15.1 min | 0 |
+| ibm07 | 1.4808 | 15.1 min | 0 |
+| ibm08 | 1.4931 | 20.1 min | 0 |
+| ibm09 | 1.1000 | 15.1 min | 0 |
+| ibm10 | 1.3364 | 30.3 min | 0 |
+| ibm11 | 1.2250 | 20.1 min | 0 |
+| ibm12 | 1.6243 | 30.3 min | 0 |
+| ibm13 | 1.3937 | 20.1 min | 0 |
+| ibm14 | 1.6309 | 30.4 min | 0 |
+| ibm15 | 1.6125 | 20.3 min | 0 |
+| ibm16 | 1.5247 | 20.5 min | 0 |
+| ibm17 | 1.7515 | 30.8 min | 0 |
+| ibm18 | 1.7925 | 15.3 min | 0 |
+| **Average / Total** | **1.4713** | **20.2 min avg; 5h44m total** | **0** |
 
 ## Repository Layout
 

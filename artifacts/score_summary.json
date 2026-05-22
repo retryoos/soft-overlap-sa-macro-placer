@@ -1,8 +1,10 @@
 {
-  "submission_avg_proxy": 1.4734,
-  "submission_total_runtime_s": 3360.0,
+  "submission_avg_proxy": 1.4713380897746366,
+  "submission_total_runtime_s": 20616.819251298904,
+  "submission_overlaps": 0,
+  "source": "Local official evaluate --all run on 17 IBM ICCAD04 benchmarks.",
   "replace_avg_proxy": 1.4578411764705883,
   "sa_avg_proxy": 2.125088235294118,
-  "submission_improvement_vs_sa_pct": 30.666408315225667,
-  "submission_delta_vs_replace_pct": 1.0672509310705172
+  "submission_improvement_vs_sa_pct": 30.76343535585008,
+  "submission_delta_vs_replace_pct": 0.9258150696994418
 }

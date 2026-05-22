@@ -60,8 +60,8 @@ REPLACE_BASELINES = {
     "ibm18": 1.7722,
 }
 
-SUBMISSION_AVG_PROXY = 1.4734
-SUBMISSION_TOTAL_RUNTIME_S = 56.0 * 60.0
+SUBMISSION_AVG_PROXY = 1.4713380897746366
+SUBMISSION_TOTAL_RUNTIME_S = 20616.819251298904
 
 
 @dataclass
@@ -92,6 +92,8 @@ def save_static_score_artifacts(out_dir: Path) -> None:
     summary = {
         "submission_avg_proxy": SUBMISSION_AVG_PROXY,
         "submission_total_runtime_s": SUBMISSION_TOTAL_RUNTIME_S,
+        "submission_overlaps": 0,
+        "source": "Local official evaluate --all run on 17 IBM ICCAD04 benchmarks.",
         "replace_avg_proxy": values[1],
         "sa_avg_proxy": values[2],
         "submission_improvement_vs_sa_pct": (values[2] - SUBMISSION_AVG_PROXY) / values[2] * 100.0,
@@ -123,7 +125,7 @@ def save_static_score_svgs(out_dir: Path, names: list[str], values: list[float])
   <text x="40" y="72" class="note">Average proxy cost, lower is better.</text>
   <line x1="170" y1="300" x2="760" y2="300" class="axis"/>
   {"".join(rows)}
-  <text x="40" y="330" class="note">Submission score is a local development aggregate; baselines are from the challenge README.</text>
+  <text x="40" y="330" class="note">Submission score is from a local evaluate --all run; baselines are from the challenge README.</text>
 </svg>
 """
     (out_dir / "avg_proxy_comparison.svg").write_text(avg_svg)

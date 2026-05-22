@@ -4,6 +4,6 @@
   <text x="40" y="45" class="title">Submission vs Published IBM ICCAD04 Baselines</text>
   <text x="40" y="72" class="note">Average proxy cost, lower is better.</text>
   <line x1="170" y1="300" x2="760" y2="300" class="axis"/>
-  <text x="42" y="127" class="label">Submission</text><rect x="170" y="105" width="388.3" height="34" fill="#2563eb"/><text x="568.3" y="128" class="value">1.4734</text><text x="42" y="197" class="label">RePlAce</text><rect x="170" y="175" width="384.2" height="34" fill="#64748b"/><text x="564.2" y="198" class="value">1.4578</text><text x="42" y="267" class="label">SA</text><rect x="170" y="245" width="560.0" height="34" fill="#ef4444"/><text x="740.0" y="268" class="value">2.1251</text>
-  <text x="40" y="330" class="note">Submission score is a local development aggregate; baselines are from the challenge README.</text>
+  <text x="42" y="127" class="label">Submission</text><rect x="170" y="105" width="387.7" height="34" fill="#2563eb"/><text x="567.7" y="128" class="value">1.4713</text><text x="42" y="197" class="label">RePlAce</text><rect x="170" y="175" width="384.2" height="34" fill="#64748b"/><text x="564.2" y="198" class="value">1.4578</text><text x="42" y="267" class="label">SA</text><rect x="170" y="245" width="560.0" height="34" fill="#ef4444"/><text x="740.0" y="268" class="value">2.1251</text>
+  <text x="40" y="330" class="note">Submission score is from a local evaluate --all run; baselines are from the challenge README.</text>
 </svg>
